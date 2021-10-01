@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+#
+# Utility for automatically prefixing git commits with JIRA ticket names.
+
+jira() {
+    _jira_activate() {
+        if [ -n "$_jira_activated" ]
+        then _jira_deactivate
+        fi
+
+        export FILTER_BRANCH_SQUELCH_WARNING=1
+        export _jira_old_ps1="$PS1"
+        export _jira_activated="$1"
+        export PS1="[$_jira_activated] $PS1"
+
+        git() {
+            command git "$@"
+            if [ "$1" == "commit" ] && [ "$?" == "0" ] && ! grep -F "[$_jira_activated]" <(git log --format=%B -n 1 2>&1) >/dev/null 2>&1
+            then # commit message
+                command git filter-branch -f --msg-filter 'sed "s/^/[$_jira_activated] /"' HEAD~..HEAD
+            fi
+        }
+    }
+
+    _jira_deactivate() {
+        export PS1="$_jira_old_ps1"
+        unset _jira_old_ps1
+        unset _jira_activated
+        unset git
+        unset FILTER_BRANCH_SQUELCH_WARNING
+    }
+
+    _jira_usage() {
+        echo "Usage:"
+        echo "  jira activate [TICKET]"
+        echo "  jira deactivate"
+        return 1
+    }
+
+    if [ "$#" = "0" ]
+    then
+        _jira_usage
+        return $?
+    fi
+
+    case "$1" in
+        activate)
+            if [ "$#" != "2" ]
+            then
+                _jira_usage
+                return $?
+            fi
+            _jira_activate "$2"
+            ;;
+        deactivate)
+            if [ "$#" != "1" ]
+            then
+                _jira_usage
+                return $?
+            fi
+            _jira_deactivate
+            ;;
+    esac
+
+    unset _jira_activate
+    unset _jira_deactivate
+    unset _jira_usage
+}
+
+if [ -n "$_jira_activated" ]
+then jira activate "$_jira_activated"
+fi

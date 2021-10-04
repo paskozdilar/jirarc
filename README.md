@@ -7,12 +7,11 @@ Copy `jirarc` file to a location (e.g. `~/.jirarc`) and source it in your
 
 Or just copy paste the following commands in your terminal:
 
-    git clone https://github.com/paskozdilar/jirarc.git
-    cd jirarc
-    cp jirarc ~/.jirarc
-    echo >> ~/.bashrc
-    echo '# Execute jirarc source:' >> ~/.bashrc
-    echo '. ~/.jirarc' >> ~/.bashrc
+    git clone https://github.com/paskozdilar/jirarc.git && \
+    cp jirarc/jirarc ~/.jirarc && \
+    echo >> ~/.bashrc && \
+    echo '# Execute jirarc source:' >> ~/.bashrc && \
+    echo '. ~/.jirarc' >> ~/.bashrc && \
     rm -rf jirarc
 
 ## Usage:

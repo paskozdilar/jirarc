@@ -10,14 +10,14 @@ jira() {
 
         export FILTER_BRANCH_SQUELCH_WARNING=1
         export _jira_old_ps1="$PS1"
-        export _jira_activated="$1"
+        export _jira_activated="${1^^}"
         export PS1="[$_jira_activated] $PS1"
 
         git() {
             command git "$@"
             if [ "$1" == "commit" ] && [ "$?" == "0" ] && ! grep -F "[$_jira_activated]" <(git log --format=%B -n 1 2>&1) >/dev/null 2>&1
             then # commit message
-                EDITOR="sed -i '0,/^/s/^\\($_jira_activated \\)\\?/$_jira_activated /'" command git commit --amend
+                EDITOR="sed -i '0,/^/s/^\\(\\[$_jira_activated\\] \\)\\?/\\[$_jira_activated\\] /'" command git commit --amend
             fi
         }
     }

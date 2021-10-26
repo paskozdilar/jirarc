@@ -8,8 +8,6 @@ jira() {
         then _jira_deactivate
         fi
 
-        export FILTER_BRANCH_SQUELCH_WARNING=1
-        export _jira_old_ps1="$PS1"
         export _jira_activated="${1^^}"
         export PS1="[$_jira_activated] $PS1"
 
@@ -23,11 +21,8 @@ jira() {
     }
 
     _jira_deactivate() {
-        export PS1="$_jira_old_ps1"
-        unset _jira_old_ps1
-        unset _jira_activated
+        export PS1="${PS1/\[${_jira_activated}\] /}"
         unset git
-        unset FILTER_BRANCH_SQUELCH_WARNING
     }
 
     _jira_usage() {
@@ -59,6 +54,10 @@ jira() {
                 return $?
             fi
             _jira_deactivate
+            ;;
+        *)
+            _jira_usage
+            return $?
             ;;
     esac
 

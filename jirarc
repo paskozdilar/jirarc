@@ -33,7 +33,7 @@ jira() {
 
         git() {
             command git "$@"
-            if [ "$1" = "commit" ] && [ "$?" = "0" ] && ! grep -F "[$_jira_activated]" <(git log --format=%B -n 1 2>&1) >/dev/null 2>&1
+            if [ "$?" = "0" ] && [ "$1" = "commit" ] && ! grep -F "[$_jira_activated]" <(git log --format=%B -n 1 2>&1) >/dev/null 2>&1
             then # commit message
                 EDITOR="sed -i '0,/^/s/^\\(\\[$_jira_activated\\] \\)\\?/\\[$_jira_activated\\] /'" command git commit --amend
             fi
